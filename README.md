@@ -1,6 +1,6 @@
 # 🎓 AI Course Assistant
 
-A local-first, resume-quality RAG (Retrieval-Augmented Generation) application that allows students to upload course documents and have grounded, trustworthy conversations with citations.
+A local-first RAG (Retrieval-Augmented Generation) application that enables students to upload course documents and have grounded, citation-backed conversations with an AI assistant. Upload your course materials, ask questions in plain English, and get accurate answers with source citations.
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
 ![LangChain](https://img.shields.io/badge/LangChain-0.1+-green.svg)
@@ -33,7 +33,7 @@ A local-first, resume-quality RAG (Retrieval-Augmented Generation) application t
 ## 🏗️ Architecture
 
 ```
-RAG-TA/
+AI-Course-Assistant/
 ├── app.py                      # Main Streamlit application
 ├── config.py                   # Configuration settings
 ├── requirements.txt            # Python dependencies
@@ -62,7 +62,7 @@ RAG-TA/
 
 1. **Clone or navigate to the project directory**:
    ```bash
-   cd RAG-TA
+   cd AI-Course-Assistant
    ```
 
 2. **Create a virtual environment** (recommended):
