@@ -118,10 +118,129 @@ st.markdown("""
        ============================================ */
     
     .stApp {
-        background: linear-gradient(180deg, var(--gray-100) 0%, var(--bg-primary) 100%);
+        background: linear-gradient(180deg, #0a0a1a 0%, #1a1a2e 50%, #16213e 100%);
         font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+    }
+    
+    /* ============================================
+       ANIMATED WAVY BACKGROUND
+       ============================================ */
+    
+    .stApp::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(ellipse at 20% 80%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+            radial-gradient(ellipse at 40% 40%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+        z-index: 0;
+        pointer-events: none;
+    }
+    
+    .stApp > * {
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Wave Animation Layer 1 */
+    .wave-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 0;
+        pointer-events: none;
+    }
+    
+    .stApp::after {
+        content: '';
+        position: fixed;
+        bottom: -5%;
+        left: -10%;
+        width: 120%;
+        height: 40%;
+        background: linear-gradient(
+            180deg,
+            transparent 0%,
+            rgba(56, 189, 248, 0.03) 50%,
+            rgba(56, 189, 248, 0.08) 100%
+        );
+        border-radius: 50% 50% 0 0;
+        animation: wave1 8s ease-in-out infinite;
+        z-index: 0;
+        pointer-events: none;
+    }
+    
+    @keyframes wave1 {
+        0%, 100% {
+            transform: translateX(-5%) translateY(0) rotate(-2deg);
+        }
+        50% {
+            transform: translateX(5%) translateY(-20px) rotate(2deg);
+        }
+    }
+    
+    /* Floating Orbs */
+    .stApp [data-testid="stAppViewContainer"]::before {
+        content: '';
+        position: fixed;
+        top: 20%;
+        right: 10%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.2) 0%, transparent 70%);
+        border-radius: 50%;
+        filter: blur(40px);
+        animation: float1 12s ease-in-out infinite;
+        z-index: 0;
+        pointer-events: none;
+    }
+    
+    .stApp [data-testid="stAppViewContainer"]::after {
+        content: '';
+        position: fixed;
+        bottom: 30%;
+        left: 5%;
+        width: 250px;
+        height: 250px;
+        background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 70%);
+        border-radius: 50%;
+        filter: blur(40px);
+        animation: float2 10s ease-in-out infinite;
+        z-index: 0;
+        pointer-events: none;
+    }
+    
+    @keyframes float1 {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+        }
+        33% {
+            transform: translate(30px, -30px) scale(1.1);
+        }
+        66% {
+            transform: translate(-20px, 20px) scale(0.9);
+        }
+    }
+    
+    @keyframes float2 {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+        }
+        50% {
+            transform: translate(-30px, -40px) scale(1.15);
+        }
     }
     
     * {
@@ -133,17 +252,18 @@ st.markdown("""
     }
     
     /* ============================================
-       HEADER - Frosted Glass Effect
+       HEADER - Frosted Glass Effect (Dark Theme)
        ============================================ */
     
     .main-header {
-        background: linear-gradient(135deg, var(--apple-blue) 0%, #5856D6 100%);
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.9) 0%, rgba(139, 92, 246, 0.9) 100%);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         padding: 2rem 2.5rem;
         border-radius: var(--radius-xl);
         margin-bottom: 2rem;
-        box-shadow: var(--shadow-lg), 
+        box-shadow: 0 8px 32px rgba(56, 189, 248, 0.3),
+                    0 0 0 1px rgba(255, 255, 255, 0.1),
                     inset 0 1px 0 rgba(255, 255, 255, 0.2);
         position: relative;
         overflow: hidden;
@@ -156,7 +276,27 @@ st.markdown("""
         left: 0;
         right: 0;
         height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    }
+    
+    .main-header::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+        animation: shimmer 3s ease-in-out infinite;
+    }
+    
+    @keyframes shimmer {
+        0%, 100% {
+            transform: translate(-30%, -30%);
+        }
+        50% {
+            transform: translate(30%, 30%);
+        }
     }
     
     .main-header h1 {
@@ -179,75 +319,82 @@ st.markdown("""
     }
     
     /* ============================================
-       CHAT MESSAGES - iMessage Style
+       CHAT MESSAGES - Glass Morphism Dark Theme
        ============================================ */
     
     .user-message {
-        background: var(--apple-blue);
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.9) 0%, rgba(139, 92, 246, 0.9) 100%);
         color: white;
-        padding: 0.875rem 1.125rem;
+        padding: 1rem 1.25rem;
         border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg);
-        margin: 0.625rem 0;
+        margin: 0.75rem 0;
         margin-left: 20%;
-        box-shadow: var(--shadow-sm);
+        box-shadow: 0 4px 20px rgba(56, 189, 248, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
         font-size: 0.9375rem;
         line-height: 1.5;
         letter-spacing: -0.01em;
         animation: slideInRight var(--duration-normal) var(--ease-spring);
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     .assistant-message {
-        background: var(--bg-elevated);
-        color: var(--gray-900);
-        padding: 0.875rem 1.125rem;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        color: rgba(255, 255, 255, 0.95);
+        padding: 1rem 1.25rem;
         border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) 4px;
-        margin: 0.625rem 0;
+        margin: 0.75rem 0;
         margin-right: 20%;
-        box-shadow: var(--shadow-md);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.05);
         font-size: 0.9375rem;
         line-height: 1.6;
         letter-spacing: -0.01em;
-        border: 1px solid var(--gray-200);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         animation: slideInLeft var(--duration-normal) var(--ease-spring);
     }
     
     @keyframes slideInRight {
         from {
             opacity: 0;
-            transform: translateX(20px);
+            transform: translateX(20px) scale(0.95);
         }
         to {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateX(0) scale(1);
         }
     }
     
     @keyframes slideInLeft {
         from {
             opacity: 0;
-            transform: translateX(-20px);
+            transform: translateX(-20px) scale(0.95);
         }
         to {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateX(0) scale(1);
         }
     }
     
     /* ============================================
-       SOURCES CARD - Subtle & Clean
+       SOURCES CARD - Glass Effect Dark Theme
        ============================================ */
     
     .sources-card {
-        background: var(--gray-50);
+        background: rgba(56, 189, 248, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
         border-radius: var(--radius-md);
         padding: 1rem 1.25rem;
         margin-top: 0.75rem;
-        border: 1px solid var(--gray-200);
+        border: 1px solid rgba(56, 189, 248, 0.2);
         animation: fadeIn var(--duration-normal) var(--ease-out);
     }
     
     .sources-card h4 {
-        color: var(--gray-700);
+        color: rgba(56, 189, 248, 1);
         font-size: 0.8125rem;
         font-weight: 600;
         margin: 0 0 0.625rem 0;
@@ -258,20 +405,21 @@ st.markdown("""
     }
     
     .source-item {
-        background: var(--bg-primary);
+        background: rgba(255, 255, 255, 0.05);
         padding: 0.625rem 0.875rem;
         border-radius: var(--radius-sm);
         margin: 0.375rem 0;
         font-size: 0.8125rem;
-        color: var(--gray-600);
-        border: 1px solid var(--gray-200);
+        color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         transition: all var(--duration-fast) var(--ease-out);
     }
     
     .source-item:hover {
-        background: var(--apple-blue-light);
-        border-color: var(--apple-blue);
-        color: var(--apple-blue);
+        background: rgba(56, 189, 248, 0.15);
+        border-color: rgba(56, 189, 248, 0.4);
+        color: rgba(56, 189, 248, 1);
+        transform: translateX(4px);
     }
     
     @keyframes fadeIn {
@@ -280,34 +428,35 @@ st.markdown("""
     }
     
     /* ============================================
-       EVIDENCE SNIPPETS - Code Block Style
+       EVIDENCE SNIPPETS - Glass Code Block
        ============================================ */
     
     .evidence-snippet {
-        background: var(--gray-900);
-        color: var(--gray-100);
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(10px);
+        color: rgba(255, 255, 255, 0.9);
         padding: 1rem;
         border-radius: var(--radius-md);
         margin: 0.625rem 0;
         font-size: 0.8125rem;
         font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
         line-height: 1.6;
-        border: 1px solid var(--gray-800);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         overflow-x: auto;
     }
     
     .evidence-snippet strong {
-        color: var(--apple-blue);
-        font-weight: 500;
+        color: rgba(56, 189, 248, 1);
+        font-weight: 600;
     }
     
     /* ============================================
-       SIDEBAR - Clean & Organized
+       SIDEBAR - Dark Glass Theme
        ============================================ */
     
     section[data-testid="stSidebar"] {
-        background: var(--bg-primary);
-        border-right: 1px solid var(--gray-200);
+        background: linear-gradient(180deg, rgba(10, 10, 26, 0.95) 0%, rgba(26, 26, 46, 0.95) 100%);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     section[data-testid="stSidebar"] > div {
@@ -317,18 +466,32 @@ st.markdown("""
     section[data-testid="stSidebar"] .stSelectbox label,
     section[data-testid="stSidebar"] .stTextInput label,
     section[data-testid="stSidebar"] .stFileUploader label {
-        color: var(--gray-900);
+        color: rgba(255, 255, 255, 0.9) !important;
         font-weight: 500;
         font-size: 0.875rem;
         letter-spacing: -0.01em;
     }
     
+    section[data-testid="stSidebar"] .stMarkdown {
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    section[data-testid="stSidebar"] h2, 
+    section[data-testid="stSidebar"] h3, 
+    section[data-testid="stSidebar"] h4 {
+        color: rgba(255, 255, 255, 0.95) !important;
+    }
+    
+    section[data-testid="stSidebar"] p {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
     /* ============================================
-       BUTTONS - Apple Style
+       BUTTONS - Gradient Glow Effect
        ============================================ */
     
     .stButton > button {
-        background: var(--apple-blue);
+        background: linear-gradient(135deg, rgba(56, 189, 248, 1) 0%, rgba(139, 92, 246, 1) 100%);
         color: white;
         border: none;
         border-radius: var(--radius-full);
@@ -336,67 +499,79 @@ st.markdown("""
         font-weight: 500;
         font-size: 0.9375rem;
         letter-spacing: -0.01em;
-        box-shadow: var(--shadow-sm);
+        box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
         cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stButton > button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s ease;
     }
     
     .stButton > button:hover {
-        background: var(--apple-blue-hover);
-        transform: scale(1.02);
-        box-shadow: var(--shadow-md);
+        transform: scale(1.02) translateY(-2px);
+        box-shadow: 0 6px 25px rgba(56, 189, 248, 0.5);
+    }
+    
+    .stButton > button:hover::before {
+        left: 100%;
     }
     
     .stButton > button:active {
         transform: scale(0.98);
     }
     
-    /* Secondary Button Style */
-    .stButton > button[kind="secondary"] {
-        background: var(--gray-100);
-        color: var(--apple-blue);
-        border: 1px solid var(--gray-300);
-    }
-    
-    .stButton > button[kind="secondary"]:hover {
-        background: var(--gray-200);
-    }
-    
     /* ============================================
-       INPUTS - Refined & Minimal
+       INPUTS - Dark Glass Style
        ============================================ */
     
     .stTextInput > div > div > input {
         border-radius: var(--radius-md);
-        border: 1px solid var(--gray-300);
+        border: 1px solid rgba(255, 255, 255, 0.15);
         padding: 0.75rem 1rem;
         font-size: 0.9375rem;
-        background: var(--bg-primary);
-        color: var(--gray-900);
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
         font-family: inherit;
     }
     
     .stTextInput > div > div > input:focus {
-        border-color: var(--apple-blue);
-        box-shadow: 0 0 0 4px var(--apple-blue-light);
+        border-color: rgba(56, 189, 248, 0.6);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
         outline: none;
+        background: rgba(255, 255, 255, 0.08);
     }
     
     .stTextInput > div > div > input::placeholder {
-        color: var(--gray-400);
+        color: rgba(255, 255, 255, 0.4);
     }
     
     .stSelectbox > div > div {
         border-radius: var(--radius-md);
-        border: 1px solid var(--gray-300);
-        background: var(--bg-primary);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
     }
     
     .stSelectbox > div > div:hover {
-        border-color: var(--gray-400);
+        border-color: rgba(255, 255, 255, 0.25);
+    }
+    
+    /* Fix selectbox text color */
+    .stSelectbox [data-baseweb="select"] span {
+        color: white !important;
     }
     
     /* ============================================
-       CHAT INPUT - Floating Style
+       CHAT INPUT - Floating Glass Style
        ============================================ */
     
     .stChatInput {
@@ -405,121 +580,141 @@ st.markdown("""
     
     .stChatInput > div {
         border-radius: var(--radius-xl);
-        border: 1px solid var(--gray-300);
-        background: var(--bg-primary);
-        box-shadow: var(--shadow-lg);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         overflow: hidden;
     }
     
     .stChatInput > div:focus-within {
-        border-color: var(--apple-blue);
-        box-shadow: var(--shadow-lg), 0 0 0 4px var(--apple-blue-light);
+        border-color: rgba(56, 189, 248, 0.5);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(56, 189, 248, 0.15);
     }
     
     .stChatInput textarea {
         font-family: inherit;
         font-size: 0.9375rem;
+        color: white !important;
+        background: transparent !important;
+    }
+    
+    .stChatInput textarea::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
     }
     
     /* ============================================
-       METRICS / STATS
+       METRICS / STATS - Glass Cards
        ============================================ */
     
     [data-testid="stMetric"] {
-        background: var(--bg-primary);
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
         border-radius: var(--radius-lg);
         padding: 1.25rem;
-        border: 1px solid var(--gray-200);
-        box-shadow: var(--shadow-sm);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     }
     
     [data-testid="stMetricValue"] {
         font-size: 1.75rem;
         font-weight: 600;
-        color: var(--gray-900);
+        color: white !important;
         letter-spacing: -0.02em;
     }
     
     [data-testid="stMetricLabel"] {
         font-size: 0.8125rem;
-        color: var(--gray-500);
+        color: rgba(255, 255, 255, 0.6) !important;
         font-weight: 500;
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
     
     /* ============================================
-       EXPANDER - Collapsible Sections
+       EXPANDER - Glass Collapsible Sections
        ============================================ */
     
     .streamlit-expanderHeader {
-        background: var(--gray-50);
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
         border-radius: var(--radius-md);
         font-weight: 500;
-        color: var(--gray-700);
-        border: 1px solid var(--gray-200);
+        color: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         padding: 0.875rem 1rem;
     }
     
     .streamlit-expanderHeader:hover {
-        background: var(--gray-100);
-        border-color: var(--gray-300);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
     }
     
     .streamlit-expanderContent {
-        border: 1px solid var(--gray-200);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-top: none;
         border-radius: 0 0 var(--radius-md) var(--radius-md);
-        background: var(--bg-primary);
+        background: rgba(255, 255, 255, 0.03);
     }
     
     /* ============================================
-       ALERTS & NOTIFICATIONS
+       ALERTS & NOTIFICATIONS - Glass Style
        ============================================ */
     
     .stSuccess {
-        background: rgba(52, 199, 89, 0.1);
+        background: rgba(52, 199, 89, 0.15);
+        backdrop-filter: blur(10px);
         border: 1px solid rgba(52, 199, 89, 0.3);
         border-radius: var(--radius-md);
-        color: #1B7D32;
+        color: #4ADE80;
     }
     
     .stWarning {
-        background: rgba(255, 149, 0, 0.1);
+        background: rgba(255, 149, 0, 0.15);
+        backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 149, 0, 0.3);
         border-radius: var(--radius-md);
-        color: #B86E00;
+        color: #FBBF24;
     }
     
     .stError {
-        background: rgba(255, 59, 48, 0.1);
+        background: rgba(255, 59, 48, 0.15);
+        backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 59, 48, 0.3);
         border-radius: var(--radius-md);
-        color: #C62828;
+        color: #F87171;
     }
     
     .stInfo {
-        background: var(--apple-blue-light);
-        border: 1px solid rgba(0, 122, 255, 0.3);
+        background: rgba(56, 189, 248, 0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(56, 189, 248, 0.3);
         border-radius: var(--radius-md);
-        color: var(--apple-blue-hover);
+        color: rgba(56, 189, 248, 1);
     }
     
     /* ============================================
-       FILE UPLOADER
+       FILE UPLOADER - Animated Border
        ============================================ */
     
     .stFileUploader {
-        border: 2px dashed var(--gray-300);
+        border: 2px dashed rgba(255, 255, 255, 0.2);
         border-radius: var(--radius-lg);
         padding: 1.5rem;
-        background: var(--gray-50);
+        background: rgba(255, 255, 255, 0.03);
         transition: all var(--duration-normal) var(--ease-out);
+        position: relative;
     }
     
     .stFileUploader:hover {
-        border-color: var(--apple-blue);
-        background: var(--apple-blue-light);
+        border-color: rgba(56, 189, 248, 0.5);
+        background: rgba(56, 189, 248, 0.05);
+        box-shadow: 0 0 30px rgba(56, 189, 248, 0.1);
+    }
+    
+    .stFileUploader label {
+        color: rgba(255, 255, 255, 0.8) !important;
     }
     
     /* ============================================
@@ -529,12 +724,12 @@ st.markdown("""
     hr {
         border: none;
         height: 1px;
-        background: var(--gray-200);
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
         margin: 1.5rem 0;
     }
     
     /* ============================================
-       SCROLLBAR - Minimal Design
+       SCROLLBAR - Minimal Glow Design
        ============================================ */
     
     ::-webkit-scrollbar {
@@ -547,12 +742,24 @@ st.markdown("""
     }
     
     ::-webkit-scrollbar-thumb {
-        background: var(--gray-300);
+        background: rgba(255, 255, 255, 0.2);
         border-radius: var(--radius-full);
     }
     
     ::-webkit-scrollbar-thumb:hover {
-        background: var(--gray-400);
+        background: rgba(56, 189, 248, 0.5);
+    }
+    
+    /* ============================================
+       GLOBAL TEXT COLOR OVERRIDES
+       ============================================ */
+    
+    .stMarkdown, .stMarkdown p, .stMarkdown span {
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        color: white !important;
     }
     
     /* ============================================
@@ -640,13 +847,15 @@ def refresh_courses():
 def render_sidebar():
     """Render the sidebar with course selection and document management."""
     with st.sidebar:
-        # Apple-style sidebar header
+        # Dark theme sidebar header with glow
         st.markdown("""
-        <div style="padding: 0.5rem 0 1rem 0;">
-            <h2 style="font-size: 1.25rem; font-weight: 600; color: #1D1D1F; margin: 0; letter-spacing: -0.02em;">
+        <div style="padding: 0.5rem 0 1.5rem 0;">
+            <h2 style="font-size: 1.375rem; font-weight: 600; color: white; margin: 0; letter-spacing: -0.02em; 
+                       background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip: text; 
+                       -webkit-text-fill-color: transparent; background-clip: text;">
                 📚 Course Assistant
             </h2>
-            <p style="font-size: 0.8125rem; color: #8E8E93; margin: 0.25rem 0 0 0;">
+            <p style="font-size: 0.8125rem; color: rgba(255,255,255,0.6); margin: 0.375rem 0 0 0;">
                 AI-powered study companion
             </p>
         </div>
@@ -654,7 +863,7 @@ def render_sidebar():
         st.markdown("---")
         
         # Course selector
-        st.markdown("#### Course Selection")
+        st.markdown("#### 📂 Course Selection")
         
         refresh_courses()
         course_options = [config.AUTO_COURSE_ID] + st.session_state.available_courses + [config.MISC_COURSE_ID]
