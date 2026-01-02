@@ -1,8 +1,8 @@
 """
-AI Course Assistant - Streamlit Application
+Multi-Course AI Teaching Assistant - Streamlit Application
 
-A local-first RAG application for students to upload course documents
-and have grounded conversations with citations.
+A production-grade RAG application enabling students to upload course documents
+and have grounded, citation-backed conversations with AI.
 """
 import streamlit as st
 from datetime import datetime
@@ -41,345 +41,568 @@ logger = logging.getLogger(__name__)
 
 # Page configuration
 st.set_page_config(
-    page_title="AI Course Assistant",
-    page_icon="🎓",
+    page_title="Multi-Course AI Teaching Assistant",
+    page_icon="📚",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for elegant light theme
+# Custom CSS - Apple-inspired Design System
 st.markdown("""
 <style>
-    /* Import elegant fonts */
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    /* ============================================
+       APPLE-INSPIRED DESIGN SYSTEM
+       Clean • Minimal • Seamless Transitions
+       ============================================ */
     
-    /* Root variables */
+    /* System Font Stack (Apple SF Pro fallback) */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=SF+Mono:wght@400;500&display=swap');
+    
+    /* CSS Variables - Apple Color Palette */
     :root {
-        --primary: #2563eb;
-        --primary-light: #3b82f6;
-        --primary-dark: #1d4ed8;
-        --accent: #f59e0b;
-        --success: #10b981;
-        --warning: #f59e0b;
-        --error: #ef4444;
-        --bg-primary: #fafbfc;
-        --bg-secondary: #ffffff;
-        --bg-tertiary: #f1f5f9;
-        --text-primary: #0f172a;
-        --text-secondary: #475569;
-        --text-muted: #94a3b8;
-        --border: #e2e8f0;
-        --shadow: rgba(15, 23, 42, 0.08);
+        /* Primary Colors */
+        --apple-blue: #007AFF;
+        --apple-blue-hover: #0056CC;
+        --apple-blue-light: rgba(0, 122, 255, 0.1);
+        
+        /* Neutral Palette */
+        --gray-50: #FAFAFA;
+        --gray-100: #F5F5F7;
+        --gray-200: #E8E8ED;
+        --gray-300: #D2D2D7;
+        --gray-400: #AEAEB2;
+        --gray-500: #8E8E93;
+        --gray-600: #636366;
+        --gray-700: #48484A;
+        --gray-800: #3A3A3C;
+        --gray-900: #1D1D1F;
+        
+        /* Semantic Colors */
+        --success: #34C759;
+        --warning: #FF9500;
+        --error: #FF3B30;
+        
+        /* Backgrounds */
+        --bg-primary: #FFFFFF;
+        --bg-secondary: var(--gray-100);
+        --bg-tertiary: var(--gray-50);
+        --bg-elevated: #FFFFFF;
+        
+        /* Glass Effect */
+        --glass-bg: rgba(255, 255, 255, 0.72);
+        --glass-border: rgba(255, 255, 255, 0.18);
+        
+        /* Shadows - Apple's layered shadow system */
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+        --shadow-xl: 0 20px 50px rgba(0, 0, 0, 0.15);
+        
+        /* Transitions - Apple's spring-like easing */
+        --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+        --duration-fast: 0.15s;
+        --duration-normal: 0.3s;
+        --duration-slow: 0.5s;
+        
+        /* Border Radius */
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-xl: 20px;
+        --radius-full: 9999px;
     }
     
-    /* Global styles */
+    /* ============================================
+       GLOBAL STYLES
+       ============================================ */
+    
     .stApp {
-        background: linear-gradient(135deg, var(--bg-primary) 0%, #f0f4ff 100%);
-        font-family: 'Outfit', sans-serif;
+        background: linear-gradient(180deg, var(--gray-100) 0%, var(--bg-primary) 100%);
+        font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
     }
     
-    /* Header styling */
+    * {
+        transition: background-color var(--duration-normal) var(--ease-out),
+                    border-color var(--duration-normal) var(--ease-out),
+                    box-shadow var(--duration-normal) var(--ease-out),
+                    transform var(--duration-fast) var(--ease-out),
+                    opacity var(--duration-normal) var(--ease-out);
+    }
+    
+    /* ============================================
+       HEADER - Frosted Glass Effect
+       ============================================ */
+    
     .main-header {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-        padding: 1.5rem 2rem;
-        border-radius: 16px;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 4px 20px rgba(37, 99, 235, 0.2);
+        background: linear-gradient(135deg, var(--apple-blue) 0%, #5856D6 100%);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        padding: 2rem 2.5rem;
+        border-radius: var(--radius-xl);
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-lg), 
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .main-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
     }
     
     .main-header h1 {
         color: white;
-        font-size: 1.75rem;
+        font-size: 1.875rem;
         font-weight: 600;
         margin: 0;
+        letter-spacing: -0.02em;
         display: flex;
         align-items: center;
         gap: 0.75rem;
     }
     
     .main-header p {
-        color: rgba(255, 255, 255, 0.85);
-        font-size: 0.95rem;
-        margin: 0.5rem 0 0 0;
-        font-weight: 300;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1rem;
+        margin: 0.625rem 0 0 0;
+        font-weight: 400;
+        letter-spacing: -0.01em;
     }
     
-    /* Chat container */
-    .chat-container {
-        background: var(--bg-secondary);
-        border-radius: 16px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 12px var(--shadow);
-        border: 1px solid var(--border);
-        margin-bottom: 1rem;
-    }
+    /* ============================================
+       CHAT MESSAGES - iMessage Style
+       ============================================ */
     
-    /* Message styling */
     .user-message {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        background: var(--apple-blue);
         color: white;
-        padding: 1rem 1.25rem;
-        border-radius: 16px 16px 4px 16px;
-        margin: 0.75rem 0;
-        margin-left: 15%;
-        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
-        font-size: 0.95rem;
+        padding: 0.875rem 1.125rem;
+        border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg);
+        margin: 0.625rem 0;
+        margin-left: 20%;
+        box-shadow: var(--shadow-sm);
+        font-size: 0.9375rem;
         line-height: 1.5;
+        letter-spacing: -0.01em;
+        animation: slideInRight var(--duration-normal) var(--ease-spring);
     }
     
     .assistant-message {
-        background: var(--bg-tertiary);
-        color: var(--text-primary);
-        padding: 1rem 1.25rem;
-        border-radius: 16px 16px 16px 4px;
-        margin: 0.75rem 0;
-        margin-right: 15%;
-        border: 1px solid var(--border);
-        font-size: 0.95rem;
+        background: var(--bg-elevated);
+        color: var(--gray-900);
+        padding: 0.875rem 1.125rem;
+        border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) 4px;
+        margin: 0.625rem 0;
+        margin-right: 20%;
+        box-shadow: var(--shadow-md);
+        font-size: 0.9375rem;
         line-height: 1.6;
+        letter-spacing: -0.01em;
+        border: 1px solid var(--gray-200);
+        animation: slideInLeft var(--duration-normal) var(--ease-spring);
     }
     
-    /* Sources card */
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    /* ============================================
+       SOURCES CARD - Subtle & Clean
+       ============================================ */
+    
     .sources-card {
-        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-        border-radius: 12px;
-        padding: 1rem;
+        background: var(--gray-50);
+        border-radius: var(--radius-md);
+        padding: 1rem 1.25rem;
         margin-top: 0.75rem;
-        border-left: 4px solid var(--accent);
+        border: 1px solid var(--gray-200);
+        animation: fadeIn var(--duration-normal) var(--ease-out);
     }
     
     .sources-card h4 {
-        color: #92400e;
-        font-size: 0.85rem;
+        color: var(--gray-700);
+        font-size: 0.8125rem;
         font-weight: 600;
-        margin: 0 0 0.5rem 0;
+        margin: 0 0 0.625rem 0;
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        letter-spacing: -0.01em;
     }
     
     .source-item {
-        background: rgba(255, 255, 255, 0.7);
-        padding: 0.5rem 0.75rem;
-        border-radius: 8px;
-        margin: 0.25rem 0;
-        font-size: 0.8rem;
-        color: var(--text-secondary);
+        background: var(--bg-primary);
+        padding: 0.625rem 0.875rem;
+        border-radius: var(--radius-sm);
+        margin: 0.375rem 0;
+        font-size: 0.8125rem;
+        color: var(--gray-600);
+        border: 1px solid var(--gray-200);
+        transition: all var(--duration-fast) var(--ease-out);
     }
     
-    /* Evidence expander */
-    .evidence-card {
-        background: var(--bg-tertiary);
-        border-radius: 12px;
-        padding: 1rem;
-        margin-top: 0.5rem;
-        border: 1px solid var(--border);
+    .source-item:hover {
+        background: var(--apple-blue-light);
+        border-color: var(--apple-blue);
+        color: var(--apple-blue);
     }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* ============================================
+       EVIDENCE SNIPPETS - Code Block Style
+       ============================================ */
     
     .evidence-snippet {
-        background: white;
-        padding: 0.75rem;
-        border-radius: 8px;
-        margin: 0.5rem 0;
-        font-size: 0.8rem;
-        color: var(--text-secondary);
-        border-left: 3px solid var(--primary-light);
-        font-family: 'JetBrains Mono', monospace;
-        line-height: 1.5;
+        background: var(--gray-900);
+        color: var(--gray-100);
+        padding: 1rem;
+        border-radius: var(--radius-md);
+        margin: 0.625rem 0;
+        font-size: 0.8125rem;
+        font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+        line-height: 1.6;
+        border: 1px solid var(--gray-800);
+        overflow-x: auto;
     }
     
-    /* Sidebar styling */
+    .evidence-snippet strong {
+        color: var(--apple-blue);
+        font-weight: 500;
+    }
+    
+    /* ============================================
+       SIDEBAR - Clean & Organized
+       ============================================ */
+    
     section[data-testid="stSidebar"] {
-        background: var(--bg-secondary);
-        border-right: 1px solid var(--border);
+        background: var(--bg-primary);
+        border-right: 1px solid var(--gray-200);
+    }
+    
+    section[data-testid="stSidebar"] > div {
+        padding-top: 2rem;
     }
     
     section[data-testid="stSidebar"] .stSelectbox label,
     section[data-testid="stSidebar"] .stTextInput label,
     section[data-testid="stSidebar"] .stFileUploader label {
-        color: var(--text-primary);
+        color: var(--gray-900);
         font-weight: 500;
-        font-size: 0.9rem;
+        font-size: 0.875rem;
+        letter-spacing: -0.01em;
     }
     
-    /* Upload section */
-    .upload-section {
-        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-        border-radius: 12px;
-        padding: 1rem;
-        margin: 1rem 0;
-        border: 1px solid #a7f3d0;
-    }
+    /* ============================================
+       BUTTONS - Apple Style
+       ============================================ */
     
-    .upload-section h4 {
-        color: #065f46;
-        font-size: 0.9rem;
-        font-weight: 600;
-        margin: 0 0 0.75rem 0;
-    }
-    
-    /* Document list */
-    .doc-list-item {
-        background: white;
-        border-radius: 10px;
-        padding: 0.75rem;
-        margin: 0.5rem 0;
-        border: 1px solid var(--border);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        transition: all 0.2s ease;
-    }
-    
-    .doc-list-item:hover {
-        border-color: var(--primary-light);
-        box-shadow: 0 2px 8px var(--shadow);
-    }
-    
-    .doc-info {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .doc-name {
-        font-weight: 500;
-        color: var(--text-primary);
-        font-size: 0.85rem;
-    }
-    
-    .doc-meta {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-    }
-    
-    /* Button styling */
     .stButton > button {
-        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        background: var(--apple-blue);
         color: white;
         border: none;
-        border-radius: 10px;
-        padding: 0.6rem 1.25rem;
+        border-radius: var(--radius-full);
+        padding: 0.75rem 1.5rem;
         font-weight: 500;
-        font-size: 0.9rem;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+        font-size: 0.9375rem;
+        letter-spacing: -0.01em;
+        box-shadow: var(--shadow-sm);
+        cursor: pointer;
     }
     
     .stButton > button:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        background: var(--apple-blue-hover);
+        transform: scale(1.02);
+        box-shadow: var(--shadow-md);
     }
     
-    /* Stats card */
-    .stats-card {
-        background: white;
-        border-radius: 12px;
-        padding: 1rem;
-        text-align: center;
-        border: 1px solid var(--border);
-        margin: 0.5rem 0;
+    .stButton > button:active {
+        transform: scale(0.98);
     }
     
-    .stats-number {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--primary);
+    /* Secondary Button Style */
+    .stButton > button[kind="secondary"] {
+        background: var(--gray-100);
+        color: var(--apple-blue);
+        border: 1px solid var(--gray-300);
     }
     
-    .stats-label {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+    .stButton > button[kind="secondary"]:hover {
+        background: var(--gray-200);
     }
     
-    /* Input styling */
-    .stTextInput > div > div > input,
-    .stSelectbox > div > div > div {
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        font-family: 'Outfit', sans-serif;
+    /* ============================================
+       INPUTS - Refined & Minimal
+       ============================================ */
+    
+    .stTextInput > div > div > input {
+        border-radius: var(--radius-md);
+        border: 1px solid var(--gray-300);
+        padding: 0.75rem 1rem;
+        font-size: 0.9375rem;
+        background: var(--bg-primary);
+        color: var(--gray-900);
+        font-family: inherit;
     }
     
     .stTextInput > div > div > input:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        border-color: var(--apple-blue);
+        box-shadow: 0 0 0 4px var(--apple-blue-light);
+        outline: none;
     }
     
-    /* Chat input */
+    .stTextInput > div > div > input::placeholder {
+        color: var(--gray-400);
+    }
+    
+    .stSelectbox > div > div {
+        border-radius: var(--radius-md);
+        border: 1px solid var(--gray-300);
+        background: var(--bg-primary);
+    }
+    
+    .stSelectbox > div > div:hover {
+        border-color: var(--gray-400);
+    }
+    
+    /* ============================================
+       CHAT INPUT - Floating Style
+       ============================================ */
+    
     .stChatInput {
-        border-radius: 16px;
+        position: relative;
     }
     
     .stChatInput > div {
-        border-radius: 16px;
-        border: 2px solid var(--border);
-        background: white;
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--gray-300);
+        background: var(--bg-primary);
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
     }
     
     .stChatInput > div:focus-within {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        border-color: var(--apple-blue);
+        box-shadow: var(--shadow-lg), 0 0 0 4px var(--apple-blue-light);
     }
     
-    /* Expander styling */
-    .streamlit-expanderHeader {
-        background: var(--bg-tertiary);
-        border-radius: 10px;
+    .stChatInput textarea {
+        font-family: inherit;
+        font-size: 0.9375rem;
+    }
+    
+    /* ============================================
+       METRICS / STATS
+       ============================================ */
+    
+    [data-testid="stMetric"] {
+        background: var(--bg-primary);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem;
+        border: 1px solid var(--gray-200);
+        box-shadow: var(--shadow-sm);
+    }
+    
+    [data-testid="stMetricValue"] {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--gray-900);
+        letter-spacing: -0.02em;
+    }
+    
+    [data-testid="stMetricLabel"] {
+        font-size: 0.8125rem;
+        color: var(--gray-500);
         font-weight: 500;
-        color: var(--text-primary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
     }
     
-    /* Divider */
-    hr {
-        border: none;
-        height: 1px;
-        background: var(--border);
-        margin: 1.5rem 0;
+    /* ============================================
+       EXPANDER - Collapsible Sections
+       ============================================ */
+    
+    .streamlit-expanderHeader {
+        background: var(--gray-50);
+        border-radius: var(--radius-md);
+        font-weight: 500;
+        color: var(--gray-700);
+        border: 1px solid var(--gray-200);
+        padding: 0.875rem 1rem;
     }
     
-    /* Success/Warning messages */
+    .streamlit-expanderHeader:hover {
+        background: var(--gray-100);
+        border-color: var(--gray-300);
+    }
+    
+    .streamlit-expanderContent {
+        border: 1px solid var(--gray-200);
+        border-top: none;
+        border-radius: 0 0 var(--radius-md) var(--radius-md);
+        background: var(--bg-primary);
+    }
+    
+    /* ============================================
+       ALERTS & NOTIFICATIONS
+       ============================================ */
+    
     .stSuccess {
-        background: #ecfdf5;
-        border: 1px solid #a7f3d0;
-        border-radius: 10px;
+        background: rgba(52, 199, 89, 0.1);
+        border: 1px solid rgba(52, 199, 89, 0.3);
+        border-radius: var(--radius-md);
+        color: #1B7D32;
     }
     
     .stWarning {
-        background: #fffbeb;
-        border: 1px solid #fde68a;
-        border-radius: 10px;
+        background: rgba(255, 149, 0, 0.1);
+        border: 1px solid rgba(255, 149, 0, 0.3);
+        border-radius: var(--radius-md);
+        color: #B86E00;
     }
     
     .stError {
-        background: #fef2f2;
-        border: 1px solid #fecaca;
-        border-radius: 10px;
+        background: rgba(255, 59, 48, 0.1);
+        border: 1px solid rgba(255, 59, 48, 0.3);
+        border-radius: var(--radius-md);
+        color: #C62828;
     }
     
-    /* Hide Streamlit branding */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+    .stInfo {
+        background: var(--apple-blue-light);
+        border: 1px solid rgba(0, 122, 255, 0.3);
+        border-radius: var(--radius-md);
+        color: var(--apple-blue-hover);
+    }
     
-    /* Scrollbar styling */
+    /* ============================================
+       FILE UPLOADER
+       ============================================ */
+    
+    .stFileUploader {
+        border: 2px dashed var(--gray-300);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        background: var(--gray-50);
+        transition: all var(--duration-normal) var(--ease-out);
+    }
+    
+    .stFileUploader:hover {
+        border-color: var(--apple-blue);
+        background: var(--apple-blue-light);
+    }
+    
+    /* ============================================
+       DIVIDERS & SPACING
+       ============================================ */
+    
+    hr {
+        border: none;
+        height: 1px;
+        background: var(--gray-200);
+        margin: 1.5rem 0;
+    }
+    
+    /* ============================================
+       SCROLLBAR - Minimal Design
+       ============================================ */
+    
     ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
+        width: 6px;
+        height: 6px;
     }
     
     ::-webkit-scrollbar-track {
-        background: var(--bg-tertiary);
-        border-radius: 4px;
+        background: transparent;
     }
     
     ::-webkit-scrollbar-thumb {
-        background: var(--text-muted);
-        border-radius: 4px;
+        background: var(--gray-300);
+        border-radius: var(--radius-full);
     }
     
     ::-webkit-scrollbar-thumb:hover {
-        background: var(--text-secondary);
+        background: var(--gray-400);
+    }
+    
+    /* ============================================
+       HIDE STREAMLIT BRANDING
+       ============================================ */
+    
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header[data-testid="stHeader"] {
+        background: transparent;
+    }
+    
+    /* ============================================
+       RESPONSIVE ADJUSTMENTS
+       ============================================ */
+    
+    @media (max-width: 768px) {
+        .user-message {
+            margin-left: 10%;
+        }
+        
+        .assistant-message {
+            margin-right: 10%;
+        }
+        
+        .main-header {
+            padding: 1.5rem;
+        }
+        
+        .main-header h1 {
+            font-size: 1.5rem;
+        }
+    }
+    
+    /* ============================================
+       LOADING STATES
+       ============================================ */
+    
+    .stSpinner > div {
+        border-color: var(--apple-blue);
+    }
+    
+    /* Pulse animation for loading */
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+    
+    .loading {
+        animation: pulse 1.5s ease-in-out infinite;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -417,11 +640,21 @@ def refresh_courses():
 def render_sidebar():
     """Render the sidebar with course selection and document management."""
     with st.sidebar:
-        st.markdown("### 🎓 AI Course Assistant")
+        # Apple-style sidebar header
+        st.markdown("""
+        <div style="padding: 0.5rem 0 1rem 0;">
+            <h2 style="font-size: 1.25rem; font-weight: 600; color: #1D1D1F; margin: 0; letter-spacing: -0.02em;">
+                📚 Course Assistant
+            </h2>
+            <p style="font-size: 0.8125rem; color: #8E8E93; margin: 0.25rem 0 0 0;">
+                AI-powered study companion
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
         st.markdown("---")
         
         # Course selector
-        st.markdown("#### 📚 Course Selection")
+        st.markdown("#### Course Selection")
         
         refresh_courses()
         course_options = [config.AUTO_COURSE_ID] + st.session_state.available_courses + [config.MISC_COURSE_ID]
@@ -602,11 +835,11 @@ def render_chat_message(role: str, content: str, sources: Optional[list] = None,
 
 def render_main_chat():
     """Render the main chat interface."""
-    # Header
+    # Apple-style Header
     st.markdown("""
     <div class="main-header">
-        <h1>🎓 AI Course Assistant</h1>
-        <p>Your intelligent study companion — Ask questions, get cited answers from your course materials.</p>
+        <h1>📚 Multi-Course AI Teaching Assistant</h1>
+        <p>Ask anything about your course materials. Get instant, cited answers.</p>
     </div>
     """, unsafe_allow_html=True)
     
