@@ -1,0 +1,53 @@
+[
+  {
+    "query": "What is the grading policy for this course?",
+    "expected_sources": ["syllabus.pdf"],
+    "course_id": null
+  },
+  {
+    "query": "When is the midterm exam scheduled?",
+    "expected_sources": ["syllabus.pdf", "schedule.pdf"],
+    "course_id": null
+  },
+  {
+    "query": "What are the office hours and location?",
+    "expected_sources": ["syllabus.pdf"],
+    "course_id": null
+  },
+  {
+    "query": "What topics are covered in week 3?",
+    "expected_sources": ["schedule.pdf"],
+    "course_id": null
+  },
+  {
+    "query": "What is the late submission policy for assignments?",
+    "expected_sources": ["syllabus.pdf"],
+    "course_id": null
+  },
+  {
+    "query": "How much is the final exam worth?",
+    "expected_sources": ["syllabus.pdf"],
+    "course_id": null
+  },
+  {
+    "query": "What programming language is used in the course?",
+    "expected_sources": ["syllabus.pdf", "lecture_01.pdf"],
+    "course_id": null
+  },
+  {
+    "query": "What are the prerequisites for this course?",
+    "expected_sources": ["syllabus.pdf"],
+    "course_id": null
+  },
+  {
+    "query": "When is assignment 1 due?",
+    "expected_sources": ["assignment_1.pdf", "schedule.pdf"],
+    "course_id": null
+  },
+  {
+    "query": "Who is the instructor for this course?",
+    "expected_sources": ["syllabus.pdf"],
+    "course_id": null
+  }
+]
+
