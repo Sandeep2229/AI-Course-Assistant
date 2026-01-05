@@ -1,6 +1,6 @@
-# 🎓 AI Course Assistant
+# 📚 Multi-Course AI Teaching Assistant
 
-A local-first RAG (Retrieval-Augmented Generation) application that enables students to upload course documents and have grounded, citation-backed conversations with an AI assistant. Upload your course materials, ask questions in plain English, and get accurate answers with source citations.
+A production-grade RAG (Retrieval-Augmented Generation) teaching assistant that enables students to upload documents across multiple courses and have grounded, citation-backed conversations. Upload your course materials, ask questions in plain English, and get accurate answers with source citations.
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
 ![LangChain](https://img.shields.io/badge/LangChain-0.1+-green.svg)
